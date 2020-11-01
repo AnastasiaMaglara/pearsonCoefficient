@@ -1,6 +1,4 @@
 import statistics
-from sklearn.metrics import mean_absolute_error
-import copy
 from math import sqrt
 import prediction
 import accuracy
@@ -9,33 +7,6 @@ NUM_OF_USERS = 100
 AVERAGE_UNCOMPUTABLE = (-1000)
 PEARSON_UNCOMPUTABLE_NO_COMMON = (-1001)
 PEARSON_UNCOMPUTABLE_ZERO_VARIANCE = (-1002)
-
-def predictionsCalculation(usersWithRating, hiddenItems):
-    arrayOfValue = []
-    ratingsUpdated = copy.deepcopy(ratings)
-    for i, u in enumerate(usersWithRating):
-        arrayOfValue.append(ratings[u][hiddenItems[i]])
-        del ratingsUpdated[u][hiddenItems[i]]
-
-    newAvgUserRatings = []
-    for i in range(0, numUsers):
-        newAvgUserRatings.insert(i, avgRating(ratingsUpdated[i]))
-
-    newSim = [[0 for x in range(numUsers)] for y in range(numUsers)]
-    for i in range(0, numUsers):
-        for j in range(0, numUsers):
-            newSim[i][j] = pearsonSim(ratingsUpdated[i], newAvgUserRatings[i], ratingsUpdated[j], newAvgUserRatings[j])
-
-    arrayOfPredictions = []
-    for i, u in enumerate(usersWithRating):
-        arrayOfPredictions.append(prediction.predictRatingPearson(ratingsUpdated, newAvgUserRatings, newSim, numUsers, u, hiddenItems[i]))
-
-    # computes mean absolute error
-    # from sklearn.metrics: print(mean_absolute_error(arrayOfValue, arrayOfPredictions))
-    print(accuracy.mae(arrayOfValue, arrayOfPredictions))
-
-    # computes RMS Errors
-    print(accuracy.RMSError(arrayOfValue, arrayOfPredictions))
 
 def pearsonSim(x, avg_x, y, avg_y):
     if ((avg_x ==  AVERAGE_UNCOMPUTABLE) or (avg_y == AVERAGE_UNCOMPUTABLE)):
@@ -72,21 +43,21 @@ numUsers = NUM_OF_USERS
 ratings = [dict() for x in range(numUsers)]
 
 # read <userid, itemid, rating> triples from dataset
-ratings[1][1] = 3;
-ratings[1][2] = 5;
-ratings[1][3] = 5;
-ratings[1][4] = 1;
-ratings[1][5] = 1;
-ratings[2][1] = 4;
-ratings[2][2] = 5;
-ratings[2][3] = 5;
-ratings[2][4] = 2;
-ratings[2][5] = 3;
-ratings[3][1] = 2;
-ratings[3][2] = 5;
-ratings[3][3] = 4;
-ratings[3][4] = 1;
-ratings[3][5] = 2;
+ratings[1][1] = 3
+ratings[1][2] = 5
+ratings[1][3] = 5
+ratings[1][4] = 1
+ratings[1][5] = 1
+ratings[2][1] = 4
+ratings[2][2] = 5
+ratings[2][3] = 5
+ratings[2][4] = 2
+ratings[2][5] = 3
+ratings[3][1] = 2
+ratings[3][2] = 5
+ratings[3][3] = 4
+ratings[3][4] = 1
+ratings[3][5] = 2
 
 avgUserRatings = []
 for i in range(0, numUsers):
@@ -100,4 +71,4 @@ for i in range(0, numUsers):
 #print(sim)
 
 print(prediction.predictRatingPearson(ratings, avgUserRatings, sim , numUsers, 2, 2))
-predictionsCalculation([2, 1, 3], [2, 4, 3])
+accuracy.predictionsCalculation(ratings, numUsers, [2, 1, 3], [2, 4, 3])
